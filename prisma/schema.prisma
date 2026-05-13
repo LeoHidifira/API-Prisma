@@ -7,8 +7,33 @@ datasource db {
   provider = "mysql"
 }
 
-model user {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique(map: "User_email_key")
+enum Role{
+  USER 
+  ADMIN
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  status   Boolean @default(true)
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt
+  role     Role   @default(USER)
+  name     String
+  email    String @unique(map: "User_email_key")
+  Post     Post[]
+
+
+  @@map("users")
+}
+
+model Post {
+  id       Int @id @default(autoincrement())
+  title    String
+  subtitle String?
+  body     String
+  userId   Int
+  author   User @relation(fields: [userId], references: [id])
+
+
+  @@map("posts")
 }
